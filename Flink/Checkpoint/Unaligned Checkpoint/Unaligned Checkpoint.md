@@ -56,7 +56,22 @@ Flink在做CP的时候会在Source端发送一个Barrier标记。
 
 # How Unaligned? 
 
+如下图，当算子中获取到第一个Barrier以后，立马发起CP动作，那什么是“处理完开启这个Checkpoint后所有数据”的状态？
 
+因为此时只有部分Barrier到达算子，所以
+
+“处理完开启这个Checkpoint后所有数据”的状态 = 此时算子的状态 + 其他通道Barrier前还未处理数据。
+
+<img src="./assets/unaligned checkpoint.png" alt="unaligned checkpoint" title="unaligned checkpoint">
+
+更进一步，先到达的Barrier不仅仅只输出到out buffer，而是直接移动到out buffer的首位。
+
+此时“处理完开启这个Checkpoint后所有数据”的状态 = 此时算子的状态 + 其他input通道Barrier前还未处理数据 + 所有ouput buffer中被Barrier超过的数据。
+
+<img src="./assets/unaligned checkpoint2.png" alt="unaligned checkpoint2" title="unaligned checkpoint2">
+
+
+按照经典的舍得理论，unaligned checkpoint 增加了状态存储的成本和降低了任务重启速度（舍），提升了CP速度和减缓了反压程度（得）。所以unaligned checkpoint更合适非常重要和高反压的任务，轻量级的任务更适合aligned checkpoint。
 
 # Ref
 1. <a href="https://developer.aliyun.com/article/768710" title="aliyun">Flink 1.11 Unaligned Checkpoint 解析</a>
