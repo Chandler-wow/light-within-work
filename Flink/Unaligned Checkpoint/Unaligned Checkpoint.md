@@ -12,7 +12,7 @@ emmmm，这似乎是个有界数据流的微批处理hhh。
 状态是Flink中核心的抽象，对于无界数据流，记录着算子在处理数据中的中间结果；在一次Flink流式任务的重启后，算子需要拿到上次的状态才能保证输出结果的正确。</br>
 举个MAX算子的例子：
 
-<img src="./assets/MAX算子状态例子.png" alt="MAX算子状态例子" title="MAX算子状态例子">
+<img src="../../assets/Unaligned Checkpoint/MAX算子状态例子.png" alt="MAX算子状态例子" title="MAX算子状态例子">
 
 而Checkpoint便是将状态持久化以便重启后取出恢复的机制。
 
@@ -28,7 +28,7 @@ Flink在做CP的时候会在Source端发送一个Barrier标记。
 
 用一个最简单的例子来看，假设所有算子的并行度为1，那么流程非常自然。当接到这个Barrier后，就代表这个CP前所有的数据都被该算子处理。
 
-<img src="./assets/单条通道的checkpoint.png" alt="单条通道的checkpoint" title="单条通道的checkpoint">
+<img src="../../assets/Unaligned Checkpoint/单条通道的checkpoint.png" alt="单条通道的checkpoint" title="单条通道的checkpoint">
 
 但通常情况下，算子的并行度>>1，所有流程会变得稍显复杂，一个CP发送的Barrier不仅仅只有一个，每条通道之间都会有一个，那么对于算子来说仅仅接收到一个Barrier是不完全的。那么，自然的想法是这些通道内的Barrier都是分裂的，凑齐分裂的Barrier为一个完整的再处理数据就可以了。
 
@@ -36,7 +36,7 @@ Flink在做CP的时候会在Source端发送一个Barrier标记。
 
 下图比较清晰，先到的Barrier在算子中等待，此通道再流入的数据只能放在算子的input buffer中缓存，等到所有的Barrier都到后，此时也就代表这个CP前所有的数据都被该算子处理。
 
-<img src="./assets/aligned checkpoint.png" alt="aligned checkpoint" title="aligned checkpoint">
+<img src="../../assets/Unaligned Checkpoint/aligned checkpoint.png" alt="aligned checkpoint" title="aligned checkpoint">
 
 # Why Unaligned?
 
@@ -46,7 +46,7 @@ Flink在做CP的时候会在Source端发送一个Barrier标记。
 
 这时，繁忙的算子很有可能没有对齐Barrier，在已经到达的Barrier的通道Buffer中数据只能缓存不动，未到达Barrier的通道的buffer能继续输出。在算子高压的情况的，任务很有可能发生重启的行为，那么因为此次的CP的没有完成，任务只能从上一次的CP开始恢复，那么未消化完的数据会变得更多。
 
-<img src="./assets/why unaligned.png" alt="why unaligned" title="why unaligned">
+<img src="../../assets/Unaligned Checkpoint/why unaligned.png" alt="why unaligned" title="why unaligned">
 
 整体来看，因为算子繁忙 -> 算子反压 -> 无法完成CP -> 任务重启 -> 算子繁忙加剧 -> 算子反压加剧。这是一个恶性的循环。
 
@@ -62,13 +62,13 @@ Flink在做CP的时候会在Source端发送一个Barrier标记。
 
 “处理完开启这个Checkpoint后所有数据”的状态 = 此时算子的状态 + 其他通道Barrier前还未处理数据。
 
-<img src="./assets/unaligned checkpoint.png" alt="unaligned checkpoint" title="unaligned checkpoint">
+<img src="../../assets/Unaligned Checkpoint/unaligned checkpoint.png" alt="unaligned checkpoint" title="unaligned checkpoint">
 
 更进一步，先到达的Barrier不仅仅只输出到out buffer，而是直接移动到out buffer的首位。
 
 此时“处理完开启这个Checkpoint后所有数据”的状态 = 此时算子的状态 + 其他input通道Barrier前还未处理数据 + 所有ouput buffer中被Barrier超过的数据。
 
-<img src="./assets/unaligned checkpoint2.png" alt="unaligned checkpoint2" title="unaligned checkpoint2">
+<img src="../../assets/Unaligned Checkpoint/unaligned checkpoint2.png" alt="unaligned checkpoint2" title="unaligned checkpoint2">
 
 
 按照经典的舍得理论，unaligned checkpoint 增加了状态存储的成本和降低了任务重启速度（舍），提升了CP速度和减缓了反压程度（得）。所以unaligned checkpoint更合适非常重要和高反压的任务，轻量级的任务更适合aligned checkpoint。

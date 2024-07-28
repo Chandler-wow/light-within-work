@@ -4,7 +4,7 @@
 > 用自己的语言和自己的理解方式记录～
 
 ## Flink
-### Checkpoint
 1. Unaligned Checkpoint 
-## 数据库
-1. 数据库的分片和分区、分库和分表
+
+## Algorithm
+1. 模式匹配 KMP算法
