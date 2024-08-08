@@ -97,8 +97,11 @@ $$
 1. \quad 是否可能\quad P[i+1] = P[i] + 1 = z + 1 \quad ?\\
 2. \quad 是否可能\quad P[i+1] = P[i] + 2 = z + 2 \quad ?\\
 $$
+<img src="../../assets/KMP/公式1.jpg" alt="公式1" title="公式1">
 
 <img src="../../assets/KMP/PMT算法推导.jpg" alt="PMT算法推导" title="PMT算法推导">
+
+<img src="../../assets/KMP/公式2.jpg" alt="公式2" title="公式2">
 
 ```math
 \because\quad P[i]=z \\
