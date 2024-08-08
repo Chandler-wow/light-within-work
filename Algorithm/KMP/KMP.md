@@ -105,7 +105,8 @@ class KMP {
 <img src="../../assets/KMP/公式2.jpg" alt="公式2" title="公式2">
 
 ```math
-\because\quad P[i]=z \\
+
+\because \quad P[i]=z \\
 \therefore \quad N_0 = N_{i-z}\\
 N_1 = N_{i-z+1}\\
 N_{z-1} = N_{i-1}\\
