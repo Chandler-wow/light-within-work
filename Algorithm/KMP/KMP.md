@@ -88,50 +88,11 @@ class KMP {
 
 ### 数学推导
 
-```math
-已知: \\
-1.\quad N = 模版字符串,\quad N_x=x_{th}字符,\quad x \in[0,n]\\
-2.\quad P[x] = x_{th} 字符的最长相同前后缀的长度,\quad x \in[0,n]\\
-3.\quad P[i] = z,\quad i\in[0,n],\quad z\in[0,i-1]\\
-求：\\
-1. \quad 是否可能\quad P[i+1] = P[i] + 1 = z + 1 \quad ?\\
-2. \quad 是否可能\quad P[i+1] = P[i] + 2 = z + 2 \quad ?\\
-```
-
 <img src="../../assets/KMP/公式1.jpg" alt="公式1" title="公式1">
 
 <img src="../../assets/KMP/PMT算法推导.jpg" alt="PMT算法推导" title="PMT算法推导">
 
 <img src="../../assets/KMP/公式2.jpg" alt="公式2" title="公式2">
-
-```math
-
-\because \quad P[i]=z \\
-\therefore \quad N_0 = N_{i-z}\\
-N_1 = N_{i-z+1}\\
-N_{z-1} = N_{i-1}\\
-\implies N_x = N_{i-z+x},\quad \forall x\in[0,z-1]\\
-\because \quad P[i]=z \\
-N_0 = N_{i-z-1} \\
-N_1 = N_{i-z} \\
-N_z = N_{i-1} \\
-\implies N_x \neq N_{i-z-1+x},\quad \exist x\in[0,z] \\
-已知\quad \textcolor{green}{P[i]=z \implies \begin{cases}
- N_x = N_{i-z+x},\quad \forall x\in[0,z-1]\\
-N_x \neq N_{i-z-1+x},\quad \exist x\in[0,z] \\
-\end{cases}}\\
-\quad \\
-\because \quad 假设\quad P[i+1] = P[i] + 1 = z + 1 \\
-\therefore \quad \textcolor{yellow}{N_x = N_{i-z+x},\quad \forall x\in[0,z]} \\
-\therefore \quad 只需要满足 N_z=N_i，假设即可成立 \\
-\quad \\
-\because \quad 假设\quad P[i+1] = P[i] + 2 = z + 2 \\
-\therefore \quad \textcolor{red}{N_x = N_{i-z-1+x},\quad \forall x\in[0,z+1]} \\
-\because \quad  N_x \neq N_{i-z-1+x},\quad \exist x\in[0,z] \\
-\therefore \quad 假设不成立 \\
-\quad \\
-\therefore 综上：P[i+1]\leq P[i]+1 \\
-```
 
 拿到最后的结论，那这就比暴力枚举要好多了，每次求P[i+1]时，总是从P[i]+1开始判断，然后逐渐递减，直到满足最长相同前后缀。
 
