@@ -88,7 +88,7 @@ class KMP {
 
 ### 数学推导
 
-$$
+```math
 已知: \\
 1.\quad N = 模版字符串,\quad N_x=x_{th}字符,\quad x \in[0,n]\\
 2.\quad P[x] = x_{th} 字符的最长相同前后缀的长度,\quad x \in[0,n]\\
@@ -96,7 +96,8 @@ $$
 求：\\
 1. \quad 是否可能\quad P[i+1] = P[i] + 1 = z + 1 \quad ?\\
 2. \quad 是否可能\quad P[i+1] = P[i] + 2 = z + 2 \quad ?\\
-$$
+```
+
 <img src="../../assets/KMP/公式1.jpg" alt="公式1" title="公式1">
 
 <img src="../../assets/KMP/PMT算法推导.jpg" alt="PMT算法推导" title="PMT算法推导">
@@ -128,8 +129,7 @@ N_x \neq N_{i-z-1+x},\quad \exist x\in[0,z] \\
 \because \quad  N_x \neq N_{i-z-1+x},\quad \exist x\in[0,z] \\
 \therefore \quad 假设不成立 \\
 \quad \\
-\therefore 综上：P[i+1]\leq P[i]+1
-
+\therefore 综上：P[i+1]\leq P[i]+1 \\
 ```
 
 拿到最后的结论，那这就比暴力枚举要好多了，每次求P[i+1]时，总是从P[i]+1开始判断，然后逐渐递减，直到满足最长相同前后缀。
